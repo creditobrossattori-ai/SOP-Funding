@@ -1,0 +1,6 @@
+{
+  "name": "Crédito Bros - Centro de Funding",
+  "description": "Plataforma LMS interna para el equipo de Funding de Crédito Bros con módulos interactivos, sincronización en tiempo real con Google Sheets y Asistente IA experto.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

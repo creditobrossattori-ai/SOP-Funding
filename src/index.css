@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --accent: #068383;
+    --accent-hover: #046565;
+    --bg-main: #F8F9FA;
+    --card-bg: #FFFFFF;
+  }
+
+  * {
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+    color: #000000;
+    background-color: #F8F9FA;
+  }
+
+  html.dark, .dark body {
+    background-color: #0f172a;
+    color: #f8fafc;
+  }
+}
+
+/* Custom scrollbar for LMS feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 131, 131, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 131, 131, 0.5);
+}
+
