@@ -15,7 +15,7 @@ export const FullScreenChat: React.FC<FullScreenChatProps> = ({
   onGoToModule,
 }) => {
   return (
-    <div className="w-full h-[calc(100vh-64px)] flex flex-col bg-[#F8F9FA] dark:bg-slate-950 transition-colors">
+    <div className="w-full h-[calc(100vh-64px)] pb-16 md:pb-0 flex flex-col bg-[#F8F9FA] dark:bg-slate-950 transition-colors">
       {/* Top Banner Header */}
       <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-4 sm:px-8 py-3 shrink-0 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">

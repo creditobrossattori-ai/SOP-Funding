@@ -256,11 +256,12 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
             <button
               id="btn-close-chat-sidebar"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-700 transition cursor-pointer"
-              title="Ocultar panel lateral de chat"
-              aria-label="Cerrar panel de chat"
+              className="flex items-center gap-1.5 px-3 py-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-gray-200/90 hover:bg-gray-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-800 dark:text-white font-bold text-xs min-h-[44px] sm:min-h-[34px] transition cursor-pointer active:scale-95 border border-gray-300 dark:border-slate-700 shadow-xs shrink-0"
+              title="Cerrar asistente"
+              aria-label="Cerrar asistente"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 stroke-[2.5]" />
+              <span className="sm:hidden font-bold">Cerrar</span>
             </button>
           )}
         </div>

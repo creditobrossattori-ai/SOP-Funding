@@ -80,7 +80,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       : 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 md:pb-8 space-y-8 animate-fadeIn">
       {/* Central Welcome Hero */}
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-slate-900 dark:to-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm p-6 sm:p-10">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">

@@ -20,6 +20,7 @@ import {
   Clock,
   Menu,
   Lock,
+  X,
 } from 'lucide-react';
 import {
   FundingModule,
@@ -70,8 +71,15 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
     [currentModule.phases[0]?.id || '']: true,
   });
 
-  // Right Chatbot Panel: open/closed state (user requirement: 30% width, collapsible)
-  const [isChatOpen, setIsChatOpen] = useState(true);
+  // Right Chatbot Panel: open/closed state
+  // On desktop (>=1024px) defaults to open (30% right column).
+  // On mobile (<1024px) defaults to closed so it NEVER obstructs or hides module content!
+  const [isChatOpen, setIsChatOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return false;
+  });
 
   // Mobile sidebar drawer state
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -125,26 +133,27 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
   return (
     <div className="w-full min-h-[calc(100vh-64px)] flex flex-col bg-[#F8F9FA] dark:bg-slate-950 transition-colors">
       {/* Module Top Bar / Breadcrumb */}
-      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-4 sm:px-6 py-3 shrink-0 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 overflow-x-auto">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-3 sm:px-6 py-2.5 sm:py-3 shrink-0 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto min-w-0">
           {/* Mobile navigation toggle */}
           <button
-            onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
-            className="lg:hidden p-2 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-200"
-            title="Abrir menú de pasos"
+            onClick={() => setIsMobileNavOpen(true)}
+            className="lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-800 dark:text-gray-100 font-bold text-xs min-h-[38px] border border-gray-200 dark:border-slate-700 active:scale-95 transition shrink-0"
+            title="Abrir índice de pasos"
           >
-            <Menu className="w-4 h-4" />
+            <Menu className="w-4 h-4 text-[#068383]" />
+            <span>Pasos ({percentage}%)</span>
           </button>
 
           {/* Module Selector Pill Dropdown */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="hidden sm:inline text-xs font-semibold text-gray-500 dark:text-gray-400">
               Módulo:
             </span>
             <select
               value={currentModule.id}
               onChange={(e) => onSelectModule(e.target.value)}
-              className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-[#068383] focus:outline-none cursor-pointer"
+              className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-[#068383] focus:outline-none cursor-pointer max-w-[150px] sm:max-w-xs truncate"
             >
               {modules.map((m) => (
                 <option key={m.id} value={m.id} disabled={m.isLocked}>
@@ -163,7 +172,7 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
         </div>
 
         {/* Right side of Top Bar: Progress and AI Assistant Trigger */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-gray-600 dark:text-gray-300">
             <span>Progreso del Módulo:</span>
             <span className="text-[#068383] font-bold">
@@ -175,11 +184,11 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
             <button
               id="btn-reopen-chat-topbar"
               onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#068383]/10 text-[#068383] hover:bg-[#068383]/20 dark:bg-[#068383]/25 dark:text-teal-300 font-bold text-xs transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#068383] text-white hover:bg-[#046565] font-bold text-xs min-h-[36px] shadow-sm active:scale-95 transition shrink-0"
               title="Mostrar Asistente de IA"
             >
-              <Bot className="w-3.5 h-3.5" />
-              <span>Ver Asistente IA</span>
+              <Bot className="w-3.5 h-3.5 animate-pulse" />
+              <span>Consultar IA</span>
             </button>
           )}
         </div>
@@ -187,13 +196,22 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
 
       {/* Main 3-Column Work Area */}
       <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile Steps Drawer Backdrop */}
+        {isMobileNavOpen && (
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden transition-opacity"
+            onClick={() => setIsMobileNavOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
         {/* ========================================================= */}
         {/* COLUMN 1: LEFT NAVIGATION (20% width on desktop)         */}
         {/* ========================================================= */}
         <aside
           className={`
-            fixed inset-y-0 left-0 z-30 w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 lg:w-1/5 shrink-0 flex flex-col
-            ${isMobileNavOpen ? 'translate-x-0 top-16 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
+            fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:w-1/5 shrink-0 flex flex-col
+            ${isMobileNavOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
           `}
         >
           {/* Header of Column 1 */}
@@ -206,9 +224,19 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
                 {currentModule.title.replace(/^Módulo \d+:\s*/, '')}
               </h2>
             </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#068383] dark:text-teal-300">
-              {percentage}%
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#068383] dark:text-teal-300">
+                {percentage}%
+              </span>
+              <button
+                onClick={() => setIsMobileNavOpen(false)}
+                className="lg:hidden p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 min-h-[40px] min-w-[40px] flex items-center justify-center transition cursor-pointer"
+                title="Cerrar índice"
+                aria-label="Cerrar índice"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Accordion Menu with Phases and Steps */}
@@ -324,20 +352,12 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
           </div>
         </aside>
 
-        {/* Backdrop for mobile left drawer */}
-        {isMobileNavOpen && (
-          <div
-            onClick={() => setIsMobileNavOpen(false)}
-            className="fixed inset-0 bg-black/40 z-20 lg:hidden"
-          />
-        )}
-
         {/* ========================================================= */}
         {/* COLUMN 2: CENTER READING CONTENT (Expandable to 80%/100%) */}
         {/* ========================================================= */}
         <main
           className={`
-            flex-1 h-full overflow-y-auto p-4 sm:p-8 transition-all duration-300
+            flex-1 h-full overflow-y-auto p-4 sm:p-8 pb-28 md:pb-8 transition-all duration-300
             ${isChatOpen ? 'lg:w-[50%]' : 'lg:w-[80%]'}
           `}
         >
@@ -755,29 +775,58 @@ export const ModuleView: React.FC<ModuleViewProps> = ({
         </main>
 
         {/* ========================================================= */}
-        {/* COLUMN 3: RIGHT COLLAPSIBLE AI CHATBOT (30% width)        */}
+        {/* COLUMN 3: RIGHT COLLAPSIBLE AI CHATBOT (Desktop 30%)      */}
         {/* ========================================================= */}
         {isChatOpen && (
-          <aside
-            id="sidebar-chatbot"
-            className="w-full sm:w-[360px] lg:w-[30%] h-full shrink-0 border-l border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl lg:shadow-none z-20 flex flex-col animate-slideInRight"
-          >
-            <AIChatDrawer
-              currentModule={currentModule}
-              currentStepTitle={activeStep?.title}
-              isSidebar={true}
-              onClose={() => setIsChatOpen(false)}
-              onExpandToFullScreen={() => onOpenFullScreenChat()}
+          <>
+            {/* Desktop: 30% Right Column (Unchanged, preserved) */}
+            <aside
+              id="sidebar-chatbot"
+              className="hidden lg:flex lg:w-[30%] h-full shrink-0 border-l border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-none z-20 flex-col animate-slideInRight"
+            >
+              <AIChatDrawer
+                currentModule={currentModule}
+                currentStepTitle={activeStep?.title}
+                isSidebar={true}
+                onClose={() => setIsChatOpen(false)}
+                onExpandToFullScreen={() => onOpenFullScreenChat()}
+              />
+            </aside>
+
+            {/* Mobile: Bottom Sheet (Does NOT push or squeeze content, easily dismissed with backdrop or Cerrar) */}
+            <div
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 lg:hidden transition-opacity"
+              onClick={() => setIsChatOpen(false)}
+              aria-hidden="true"
             />
-          </aside>
+            <div
+              className="fixed inset-x-0 bottom-0 z-50 h-[88vh] max-h-[92vh] bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl border-t border-gray-200 dark:border-slate-800 flex flex-col overflow-hidden lg:hidden animate-slideUp"
+            >
+              {/* Mobile handle to tap or drag */}
+              <div
+                className="w-12 h-1.5 bg-gray-300 dark:bg-slate-700 rounded-full mx-auto my-2.5 shrink-0 cursor-pointer"
+                onClick={() => setIsChatOpen(false)}
+                title="Toca para cerrar"
+              />
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <AIChatDrawer
+                  currentModule={currentModule}
+                  currentStepTitle={activeStep?.title}
+                  isSidebar={true}
+                  onClose={() => setIsChatOpen(false)}
+                  onExpandToFullScreen={() => onOpenFullScreenChat()}
+                />
+              </div>
+            </div>
+          </>
         )}
 
-        {/* Floating Button to Re-Open Chat if Closed (Mandated by user: "Debe haber un botón flotante para volver a abrir el chat si está cerrado") */}
+        {/* Floating Button to Re-Open Chat if Closed (Positioned above mobile bottom bar) */}
         {!isChatOpen && (
           <button
             id="btn-floating-reopen-chat"
             onClick={() => setIsChatOpen(true)}
-            className="fixed bottom-6 right-6 z-30 flex items-center gap-2 px-4 py-3 rounded-full bg-[#068383] text-white font-bold text-xs sm:text-sm shadow-xl shadow-[#068383]/30 hover:bg-[#046565] hover:scale-105 active:scale-95 transition-all cursor-pointer border-2 border-white dark:border-slate-800"
+            className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-30 flex items-center gap-2 px-4 py-3 rounded-full bg-[#068383] text-white font-bold text-xs sm:text-sm shadow-xl shadow-[#068383]/30 hover:bg-[#046565] hover:scale-105 active:scale-95 transition-all cursor-pointer border-2 border-white dark:border-slate-800"
             title="Reabrir Asistente de IA"
           >
             <Bot className="w-4 h-4 animate-pulse" />

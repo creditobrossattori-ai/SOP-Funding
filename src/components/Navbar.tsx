@@ -76,8 +76,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Navigation Tabs (3 Main Views) */}
-          <nav className="flex items-center gap-1 sm:gap-2">
+          {/* Navigation Tabs (Desktop only - 3 Main Views) */}
+          <nav className="hidden md:flex items-center gap-1 sm:gap-2">
             <button
               id="nav-tab-home"
               onClick={() => setActiveView('home')}
@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Home className="w-4 h-4" />
-              <span className="hidden md:inline">Inicio</span>
+              <span>Inicio</span>
             </button>
 
             <button
@@ -124,7 +124,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Global Progress Bar (Local Storage Persisted) */}
+            {/* Global Progress Badge (Mobile + Tablet) */}
+            <div
+              className="flex xl:hidden items-center gap-1 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-[11px] font-bold text-gray-300"
+              title={`Progreso total: ${overallProgress}%`}
+            >
+              <span className="text-gray-400">Progreso:</span>
+              <span className="text-[#068383]">{overallProgress}%</span>
+            </div>
+
+            {/* Global Progress Bar (Desktop Large) */}
             <div
               className="hidden xl:flex flex-col items-end min-w-[130px]"
               title={`Progreso total del equipo: ${overallProgress}% completado`}
@@ -145,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="btn-toggle-dark-mode"
               onClick={onToggleDarkMode}
-              className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-850 border border-transparent hover:border-gray-800 transition cursor-pointer"
+              className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-850 border border-transparent hover:border-gray-800 transition cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center"
               title={isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
               aria-label="Alternar modo oscuro"
             >
@@ -158,6 +167,54 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (Thumb-friendly iOS/Android style) */}
+      <nav
+        id="mobile-bottom-nav"
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#000000]/95 backdrop-blur-md border-t border-gray-900 px-4 py-1.5 flex items-center justify-around shadow-2xl"
+      >
+        <button
+          onClick={() => setActiveView('home')}
+          className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition min-w-[64px] min-h-[48px] active:scale-95 ${
+            activeView === 'home'
+              ? 'text-[#068383] font-bold'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Home className={`w-5 h-5 ${activeView === 'home' ? 'text-[#068383]' : ''}`} />
+          <span className="text-[11px] mt-0.5">Inicio</span>
+        </button>
+
+        <button
+          onClick={() => setActiveView('module')}
+          className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition min-w-[64px] min-h-[48px] active:scale-95 ${
+            activeView === 'module'
+              ? 'text-[#068383] font-bold'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <BookOpen className={`w-5 h-5 ${activeView === 'module' ? 'text-[#068383]' : ''}`} />
+          <span className="text-[11px] mt-0.5">Módulos</span>
+        </button>
+
+        <button
+          onClick={() => setActiveView('chat')}
+          className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition min-w-[64px] min-h-[48px] relative active:scale-95 ${
+            activeView === 'chat'
+              ? 'text-[#068383] font-bold'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <div className="relative">
+            <MessageSquare className={`w-5 h-5 ${activeView === 'chat' ? 'text-[#068383]' : ''}`} />
+            <span className="flex h-2 w-2 absolute -top-0.5 -right-1">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#068383]"></span>
+            </span>
+          </div>
+          <span className="text-[11px] mt-0.5">Chatbot IA</span>
+        </button>
+      </nav>
     </header>
   );
 };
